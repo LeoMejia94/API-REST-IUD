@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "dotenv": "^16.0.2",
+    "express": "^4.18.1",
+    "json-server": "^0.17.0",
+    "mongoose": "^6.6.1"
+  },
+  "name": "api-rest-nodejs",
+  "version": "1.0.0",
+  "description": "API Rest",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Leonardo",
+  "license": "ISC"
+}
