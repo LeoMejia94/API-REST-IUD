@@ -1,22 +1,31 @@
 const TipoEquipo = require('../models/TipoEquipo') 
 const {request, response} = require('express')
 
-const createTipoEquipo = async (req = request, res = response) =>{
-     console.log(req.body) 
-     ? req.body.nombre.toUpperCase()
-     : '';
-     const tipoEquipoBD = await TipoEquipo.findOne ({ nombre })
-     if(tipoEquipoBD){
-        return res.status(400).json({msg: 'ya existe nombre'})
+const createTipoEquipo = async (req = request,
+    res = response) =>{
+      try{
+         //console.log(req.body)
+         const nombre = (req.body.nombre) 
+         ? req.body.nombre.toUpperCase()
+         : '';
+         const tipoEquipoBD = await TipoEquipo.findOne({ nombre })
+         if(tipoEquipoBD){
+             return res.status(400).json({msg: 'Ya existe nombre'})
+         }
+         const datos = {
+             nombre
+         }
+         //const datos = req.body
+         const tipoEquipo = new TipoEquipo(datos)
+         console.log(tipoEquipo)
+         await tipoEquipo.save()
+         res.status(201).json(tipoEquipo)
+     }catch(e){
+       console.log(e)
+       return res.status(500).json({
+         msg: e
+       })
      }
-     const datos = {
-        nombre
-        
-     }
-     const tipoEquipo = new TipoEquipo(datos)
-     console.log(tipoEquipo)
-     await tipoEquipo.save()
-     res.status(201).json(tipoEquipo)
 }
 
 
@@ -35,18 +44,16 @@ const getTiposEquipo =  async (req = request,
 
 const getTipoEquipoByID =  async (req = request,
     res = response) => {
-   try{
-      console.log(req.query)
-      console.log(req.params)
-      const estado = req.query.estado
-      const id = req.params.id
-         const query = {estado: estado, _id: id}
-         const tipoEquipoDB = await TipoEquipo.find(query)
-         return res.json(tipoEquipoDB)   
-      }catch(e){
-      console.log(e)
-      return res.status(500).json({msg: e})
-   }
+      try{
+         console.log(req.params)
+         const id = req.params.id
+         const query = {_id: id}
+         const tipoequipoDB = await TipoEquipo.findOne(query)
+         return res.json(tipoequipoDB)
+     }catch(e){
+         console.log(e)
+         return res.status(500).json({msg: e})  
+     }
    
 
 }

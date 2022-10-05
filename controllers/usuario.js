@@ -2,15 +2,22 @@ const Usuario = require('../models/usuario')
 const {request, response} = require('express')
 
 const createUsuario = async (req = request, res = response) => {
-    console.log(req.body)
-    const usuarioBD = await Usuario.findOne({ email })
-    if(usuarioBD){
-        return res.status(400).json({msg: 'Ya existe usuario'})
+    try{
+        const data = req.body
+        const email = data.email
+        console.log(data)
+        const usuarioBD = await Usuario.findOne({ email })
+        if(usuarioBD){
+            return res.status(400).json({msg: 'Ya existe usuario'})
+        }
+        const usuario = new Usuario(data)
+        console.log(usuario)
+        await usuario.save()
+        return res.status(201).json(usuario)
+    }catch(e){
+        console.log(e)
+        return res.status(500).json({e})
     }
-    const usuario = new Usuario(req.body)
-    console.log(usuario)
-    await usuario.save()
-    res.status(201).json(usuario)
 }
 const getUsuarios = async (req = request,
     res = response) => {
@@ -29,53 +36,47 @@ const getUsuarios = async (req = request,
  
  const getUsuarioByID  = async (req = request,
     res = response) => {
-    try{
-        console.log(req.query)
-        console.log(req.params)
-        const usuario = req.query.Usuario
-        const id = req.params.id
-        const query = {usuario: usuario, _id: id}
-        const usuarioDB = await Usuario.findOne(query)
-        return res.json(usuarioDB)
-    }catch(e){
-        console.log(e)
-        return res.status(500).json({msg: e})  
-    }
+        try{
+            const id = req.params.id
+            const filter = { _id: id}
+            const usuarioDB = await Usuario.findOne(filter)
+            return res.json(usuarioDB)
+        }catch(e){
+            return res.status(500).json({msj: e})
+        }
  }
  
  
  const updateUsuarioByID = async (req = request,
     res = response) => {
         try{
-            console.log(req.body)
-            console.log(req.params)
-            const data = req.body
             const id = req.params.id
+            const data = req.body
+            console.log(data)
+            console.log(id)
             data.fechaActualizacion = new Date()
+            console.log(data)
             const usuario = await Usuario.findByIdAndUpdate(id, data, {new: true})
-            return res.json(usuario)
+            return res.status(201).json(usuario)
         }catch(e){
-            console.log(e)
-            return res.status(500).json({msg: e})  
-        }
+            return res.status(500).json({msj: e})
+        }  
  }
  
  
  const deleteUsuarioByID = async (req = request,
     res = response) => {
-    try{
-        console.log(req.params)
-        const id = req.params.id
-        const usuarioDB = await Usuario.findById(id)
-        if(!usuarioDB){
-            return res.status(404).json({msg: 'No existe el usuario'})
+        try{
+            const id = req.params.id
+            const usuarioBD = await Usuario.findById(id)
+            if(!usuarioBD){
+                return res.status(404).json({msj: 'No existe usuario'})
+            }
+            await Usuario.findByIdAndDelete(id)
+            return res.status(204).json({msj: 'Borrado '})
+        }catch(e){
+            return res.status(500).json({msj: e})
         }
-        await Usuario.findByIdAndDelete(id)
-        return res.status(204).json({msg: 'Borrado', id})
-    }catch(e){
-        console.log(e)
-        return res.status(500).json({msg: e})  
-    }
  }
 module.exports = { 
     createUsuario,

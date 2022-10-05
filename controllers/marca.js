@@ -1,10 +1,12 @@
 const Marca = require('../models/marca')
 const { request, response } = require('express')
-
+/**
+ * Crea un marca de equipo
+ */
 const createMarca = async (req = request, 
     res = response) => {
         try{
-            console.log(req.body)
+            //console.log(req.body)
             const nombre = (req.body.nombre) 
             ? req.body.nombre.toUpperCase()
             : '';
@@ -27,70 +29,74 @@ const createMarca = async (req = request,
         }
 }
 
-const getMarcas = async (req = request,
+/**
+ * Consulta todos las marcas de equipo
+ */
+const getMarcas = async (req = request, 
     res = response) => {
     try{
         console.log(req.query)
-        const marca = req.query.estado
-        const query = {marca: marca}
-        const marcaDB = await Marca.find(query)
-        return res.json(marcaDB)
+        const estado = req.query.estado
+        const query = { estado: estado }
+        const marcas = await Marca.find(query)
+        return res.json(marcas)
     }catch(e){
-        console.log(e)
-        return res.status(500).json({msg: e})  
+        return res.status(500).json({msj: e})
     }
 }
 
-const getMarcaByID = async (req = request,
+/**
+ *  Consulta una marca por su ID
+ */
+const getMarcaByID = async (req = request, 
     res = response) => {
     try{
-        console.log(req.query)
-        console.log(req.params)
-        const marca = req.query.marca
-        const id = req.params.id
-        const query = {marca: marca, _id: id}
-        const marcaDB = await Marca.findOne(query)
-        return res.json(marcaDB)
-    }catch(e){
-        console.log(e)
-        return res.status(500).json({msg: e})  
-    }
-}
-
-
-const updateMarcaByID = async (req = request,
-    res = response) => {
-        try{
-            console.log(req.body)
-            console.log(req.params)
-            const data = req.body
-            const id = req.params.id
-            data.fechaActualizacion = new Date()
-            const marca = await Marca.findByIdAndUpdate(id, data, {new: true})
-            return res.json(marca)
-        }catch(e){
-            console.log(e)
-            return res.status(500).json({msg: e})  
-        }
-}
-
-const deleteMarcaByID = async (req = request,
-    res = response) => {
-    try{
-        console.log(req.params)
         const id = req.params.id
         const marcaDB = await Marca.findById(id)
-        if(!marcaDB){
-            return res.status(404).json({msg: 'No existe la Marca'})
-        }
-        await Marca.findByIdAndDelete(id)
-        return res.status(204).json({msg: 'Borrado', id})
+        return res.json(marcaDB)
     }catch(e){
-        console.log(e)
-        return res.status(500).json({msg: e})  
+        return res.status(500).json({msj: e})
     }
 }
-module.exports ={
+
+/**
+ * Actualiza una marca por su ID
+ */
+const updateMarcaByID = async (req = request, 
+    res = response) => {
+    try{
+        const id = req.params.id
+        const data = req.body
+        console.log(data)
+        console.log(id)
+        data.fechaActualizacion = new Date()
+        console.log(data)
+        const marca = await Marca.findByIdAndUpdate(id, data, {new: true})
+        return res.status(201).json(marca)
+    }catch(e){
+        return res.status(500).json({msj: e})
+    }  
+}
+
+/**
+ * Borra una marca por su ID
+ */
+const deleteMarcaByID = async (req = request, 
+    res = response) => {
+        try{
+            const id = req.params.id
+            const marcaBD = await Marca.findById(id)
+            if(!marcaBD){
+                return res.status(404).json({msj: 'No existe marca'})
+            }
+            await Marca.findByIdAndDelete(id)
+            return res.status(204).json({})
+        }catch(e){
+            return res.status(500).json({msj: e})
+        }
+}
+
+module.exports = { 
     createMarca, 
     getMarcas, 
     getMarcaByID,
