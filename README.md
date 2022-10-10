@@ -8,7 +8,7 @@ cd back-inventarios
 npm install
 
 ## crear .env
-PORT=3000
+PORT=4000
 MONGO_URI=mongodb+srv://BaseDeDatos:sidofus94@cluster0.qpxmiix.mongodb.net/?retryWrites=true&w=majority
 
 
