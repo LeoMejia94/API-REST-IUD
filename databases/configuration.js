@@ -1,17 +1,16 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 const mongoConn = async () => {
-    console.log(process.env.MONGODB_URI)
     try{
-        await mongoose.connect( process.env.MONGODB_URI, {
+       await mongoose.connect(process.env.MONGO_URI, {
             useNewUrlParser: true, 
             useUnifiedTopology: true
         });
-        console.log('Conexión Mongo OK!');  
+        console.log('conexión OK con Mongo!')
     }catch(e){
-        console.log('Error de conexión a Mongo', e);
+        console.log('Error de conexión', e);
         throw new Error('Error de conexión');
-    }    
-};
+    }
+}
 
-module.exports = { mongoConn };
+module.exports = { mongoConn }
